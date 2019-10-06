@@ -7,18 +7,6 @@ using System.Linq;
 
 namespace CSharpAdvanceDesignTests
 {
-    public class ComboCompareer
-    {
-        public ComboCompareer(IComparer<Employee> firstComparer, IComparer<Employee> secondComparer)
-        {
-            FirstComparer = firstComparer;
-            SecondComparer = secondComparer;
-        }
-
-        public IComparer<Employee> FirstComparer { get; private set; }
-        public IComparer<Employee> SecondComparer { get; private set; }
-    }
-
     [TestFixture]
     public class JoeyOrderByTests
     {
@@ -38,7 +26,7 @@ namespace CSharpAdvanceDesignTests
 
             var actual = JoeyOrderByLastNameAndFirstName(
                 employees,
-                new ComboCompareer(firstComparer, secondComparer));
+                new ComboComparer(firstComparer, secondComparer));
 
             var expected = new[]
             {
@@ -53,7 +41,7 @@ namespace CSharpAdvanceDesignTests
 
         private IEnumerable<Employee> JoeyOrderByLastNameAndFirstName(
             IEnumerable<Employee> employees,
-            ComboCompareer comboComparer)
+            ComboComparer comboComparer)
         {
             //bubble sort
             var elements = employees.ToList();
