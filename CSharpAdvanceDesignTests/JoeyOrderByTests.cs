@@ -7,6 +7,35 @@ using System.Linq;
 
 namespace CSharpAdvanceDesignTests
 {
+    public static class MyLinqExtensions
+    {
+        public static IEnumerable<Employee> JoeyOrderByComboComparer(this IEnumerable<Employee> employees,
+            IComparer<Employee> comparer)
+        {
+            //bubble sort
+            var elements = employees.ToList();
+            while (elements.Any())
+            {
+                var minElement = elements[0];
+                var index = 0;
+                for (int i = 1; i < elements.Count; i++)
+                {
+                    var employee = elements[i];
+                    var finalCompareResult = comparer.Compare(employee, minElement);
+
+                    if (finalCompareResult < 0)
+                    {
+                        minElement = employee;
+                        index = i;
+                    }
+                }
+
+                elements.RemoveAt(index);
+                yield return minElement;
+            }
+        }
+    }
+
     [TestFixture]
     public class JoeyOrderByTests
     {
@@ -22,11 +51,10 @@ namespace CSharpAdvanceDesignTests
             };
 
             var firstComparer = new CombineKeyComparer<string>(employee => employee.LastName, Comparer<string>.Default);
-            var secondComparer = new CombineKeyComparer<string>(employee => employee.FirstName, Comparer<string>.Default);
+            var secondComparer =
+                new CombineKeyComparer<string>(employee => employee.FirstName, Comparer<string>.Default);
 
-            var actual = JoeyOrderByLastNameAndFirstName(
-                employees,
-                new ComboComparer(firstComparer, secondComparer));
+            var actual = employees.JoeyOrderByComboComparer(new ComboComparer(firstComparer, secondComparer));
 
             var expected = new[]
             {
@@ -39,69 +67,41 @@ namespace CSharpAdvanceDesignTests
             expected.ToExpectedObject().ShouldMatch(actual);
         }
 
-
-        //[Test]
-        //public void orderBy_lastName_firstName_Age()
-        //{
-        //    var employees = new[]
-        //    {
-        //        new Employee {FirstName = "Joey", LastName = "Wang", Age = 50},
-        //        new Employee {FirstName = "Tom", LastName = "Li", Age = 31},
-        //        new Employee {FirstName = "Joseph", LastName = "Chen", Age = 32},
-        //        new Employee {FirstName = "Joey", LastName = "Chen", Age = 33},
-        //        new Employee {FirstName = "Joey", LastName = "Wang", Age = 20},
-        //    };
-
-        //    var firstKeyComparer =
-        //        new CombineKeyComparer<string>(element => element.LastName, Comparer<string>.Default);
-        //    var lastKeyComparer =
-        //        new CombineKeyComparer<string>(element => element.FirstName, Comparer<string>.Default);
-
-        //    var untilNowComparer = new ComboComparer(firstKeyComparer, lastKeyComparer);
-
-        //    var lastComparer = new CombineKeyComparer<int>(employee => employee.Age, Comparer<int>.Default);
-
-        //    var comboComparer = new ComboComparer(untilNowComparer, lastComparer);
-
-        //    var actual = JoeyOrderByLastNameAndFirstName(employees, comboComparer);
-
-        //    var expected = new[]
-        //    {
-        //        new Employee {FirstName = "Joey", LastName = "Chen", Age = 33},
-        //        new Employee {FirstName = "Joseph", LastName = "Chen", Age = 32},
-        //        new Employee {FirstName = "Tom", LastName = "Li", Age = 31},
-        //        new Employee {FirstName = "Joey", LastName = "Wang", Age = 20},
-        //        new Employee {FirstName = "Joey", LastName = "Wang", Age = 50},
-        //    };
-
-        //    expected.ToExpectedObject().ShouldMatch(actual);
-        //}
-
-        private IEnumerable<Employee> JoeyOrderByLastNameAndFirstName(
-            IEnumerable<Employee> employees,
-            IComparer<Employee> comboComparer)
+        [Test]
+        public void orderBy_lastName_firstName_Age()
         {
-            //bubble sort
-            var elements = employees.ToList();
-            while (elements.Any())
+            var employees = new[]
             {
-                var minElement = elements[0];
-                var index = 0;
-                for (int i = 1; i < elements.Count; i++)
-                {
-                    var employee = elements[i];
-                    var finalCompareResult = comboComparer.Compare(employee, minElement);
+                new Employee {FirstName = "Joey", LastName = "Wang", Age = 50},
+                new Employee {FirstName = "Tom", LastName = "Li", Age = 31},
+                new Employee {FirstName = "Joseph", LastName = "Chen", Age = 32},
+                new Employee {FirstName = "Joey", LastName = "Chen", Age = 33},
+                new Employee {FirstName = "Joey", LastName = "Wang", Age = 20},
+            };
 
-                    if (finalCompareResult < 0)
-                    {
-                        minElement = employee;
-                        index = i;
-                    }
-                }
+            var firstKeyComparer =
+                new CombineKeyComparer<string>(element => element.LastName, Comparer<string>.Default);
+            var lastKeyComparer =
+                new CombineKeyComparer<string>(element => element.FirstName, Comparer<string>.Default);
 
-                elements.RemoveAt(index);
-                yield return minElement;
-            }
+            var untilNowComparer = new ComboComparer(firstKeyComparer, lastKeyComparer);
+
+            var lastComparer = new CombineKeyComparer<int>(employee => employee.Age, Comparer<int>.Default);
+
+            var comboComparer = new ComboComparer(untilNowComparer, lastComparer);
+
+            var actual = employees.JoeyOrderByComboComparer(comboComparer);
+
+            var expected = new[]
+            {
+                new Employee {FirstName = "Joey", LastName = "Chen", Age = 33},
+                new Employee {FirstName = "Joseph", LastName = "Chen", Age = 32},
+                new Employee {FirstName = "Tom", LastName = "Li", Age = 31},
+                new Employee {FirstName = "Joey", LastName = "Wang", Age = 20},
+                new Employee {FirstName = "Joey", LastName = "Wang", Age = 50},
+            };
+
+            expected.ToExpectedObject().ShouldMatch(actual);
         }
     }
 }
