@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Lab.Entities;
 
@@ -6,6 +7,13 @@ namespace CSharpAdvanceDesignTests
 {
     public static class MyLinqExtensions
     {
+
+        //public static IEnumerable<Employee> JoeyOrderBy(this IEnumerable<Employee> employees, IComparer<Employee> comparer)
+        //{
+
+        //}
+
+
         public static IEnumerable<Employee> JoeyOrderByComboComparer(this IEnumerable<Employee> employees,
             IComparer<Employee> comparer)
         {
@@ -30,6 +38,16 @@ namespace CSharpAdvanceDesignTests
                 elements.RemoveAt(index);
                 yield return minElement;
             }
+        }
+
+        public static IEnumerable<Employee> JoeyOrderBy<TKey>(this IEnumerable<Employee> employees, Func<Employee, TKey> keySelector)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static IEnumerable<Employee> JoeyThenBy<TKey>(this IEnumerable<Employee> actual, Func<Employee, TKey> selector)
+        {
+            throw new NotImplementedException();
         }
     }
 }

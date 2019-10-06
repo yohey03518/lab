@@ -49,18 +49,22 @@ namespace CSharpAdvanceDesignTests
                 new Employee {FirstName = "Joey", LastName = "Wang", Age = 20},
             };
 
-            var firstKeyComparer =
-                new CombineKeyComparer<string>(element => element.LastName, Comparer<string>.Default);
-            var lastKeyComparer =
-                new CombineKeyComparer<string>(element => element.FirstName, Comparer<string>.Default);
+            //var firstKeyComparer =
+            //    new CombineKeyComparer<string>(element => element.LastName, Comparer<string>.Default);
+            //var lastKeyComparer =
+            //    new CombineKeyComparer<string>(element => element.FirstName, Comparer<string>.Default);
 
-            var untilNowComparer = new ComboComparer(firstKeyComparer, lastKeyComparer);
+            //var untilNowComparer = new ComboComparer(firstKeyComparer, lastKeyComparer);
 
-            var lastComparer = new CombineKeyComparer<int>(employee => employee.Age, Comparer<int>.Default);
+            //var lastComparer = new CombineKeyComparer<int>(employee => employee.Age, Comparer<int>.Default);
 
-            var comboComparer = new ComboComparer(untilNowComparer, lastComparer);
+            //var comboComparer = new ComboComparer(untilNowComparer, lastComparer);
 
-            var actual = employees.JoeyOrderByComboComparer(comboComparer);
+            var actual = employees.JoeyOrderBy(e => e.LastName)
+                                  .JoeyThenBy(e => e.FirstName)
+                                  .JoeyThenBy(e => e.Age);
+ 
+            //var actual = employees.JoeyOrderByComboComparer(comboComparer);
 
             var expected = new[]
             {
