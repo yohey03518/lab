@@ -1,13 +1,23 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Lab.Entities;
 
 namespace CSharpAdvanceDesignTests
 {
-    public static class MyComparerBuilder
+    public class MyComparerBuilder : IEnumerable<Employee>
     {
-        public static IEnumerable<Employee> Sort(IEnumerable<Employee> employees, IComparer<Employee> comparer)
+        private readonly IEnumerable<Employee> _Source;
+        private readonly IComparer<Employee> _CurrentComparer;
+
+        public MyComparerBuilder(IEnumerable<Employee> source, IComparer<Employee> currentComparer)
+        {
+            _Source = source;
+            _CurrentComparer = currentComparer;
+        }
+
+        public static IEnumerator<Employee> Sort(IEnumerable<Employee> employees, IComparer<Employee> comparer)
         {
             //bubble sort
             var elements = employees.ToList();
@@ -31,6 +41,16 @@ namespace CSharpAdvanceDesignTests
                 yield return minElement;
             }
         }
+
+        public IEnumerator<Employee> GetEnumerator()
+        {
+            return Sort(_Source, _CurrentComparer);
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
     }
 
     public static class MyLinqExtensions
@@ -38,18 +58,15 @@ namespace CSharpAdvanceDesignTests
         public static IEnumerable<Employee> JoeyOrderBy<TKey>(this IEnumerable<Employee> employees,
             Func<Employee, TKey> keySelector)
         {
-            throw new NotImplementedException();
+            var comparer = new CombineKeyComparer<TKey>(keySelector, Comparer<TKey>.Default);
+            return new MyComparerBuilder(employees, comparer);
         }
-
-        //public static IEnumerable<Employee> JoeyOrderBy(this IEnumerable<Employee> employees, IComparer<Employee> comparer)
-        //{
-
-        //}
 
         public static IEnumerable<Employee> JoeyOrderByComboComparer(this IEnumerable<Employee> employees,
             IComparer<Employee> comparer)
         {
-            return MyComparerBuilder.Sort(employees, comparer);
+            return new MyComparerBuilder(employees, comparer);
+            //return MyComparerBuilder.Sort(employees, comparer);
         }
 
         public static IEnumerable<Employee> JoeyThenBy<TKey>(this IEnumerable<Employee> actual,
