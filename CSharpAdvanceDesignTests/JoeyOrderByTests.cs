@@ -24,8 +24,7 @@ namespace CSharpAdvanceDesignTests
             var actual = JoeyOrderByLastNameAndFirstName(
                 employees,
                 new CombineKeyComparer(employee => employee.LastName, Comparer<string>.Default),
-                employee => employee.FirstName,
-                Comparer<string>.Default);
+                new CombineKeyComparer(employee => employee.FirstName, Comparer<string>.Default));
 
             var expected = new[]
             {
@@ -41,8 +40,7 @@ namespace CSharpAdvanceDesignTests
         private IEnumerable<Employee> JoeyOrderByLastNameAndFirstName(
             IEnumerable<Employee> employees,
             IComparer<Employee> firstCombineKeyComparer,
-            Func<Employee, string> secondKeySelector,
-            IComparer<string> secondKeyComparer)
+            IComparer<Employee> secondCombineKeyComparer)
         {
             //bubble sort
             var elements = employees.ToList();
@@ -60,7 +58,7 @@ namespace CSharpAdvanceDesignTests
                     }
                     else if (firstCombineKeyComparer.Compare(employee, minElement) == 0)
                     {
-                        if (secondKeyComparer.Compare(secondKeySelector(employee), secondKeySelector(minElement)) < 0)
+                        if (secondCombineKeyComparer.Compare(employee, minElement) < 0)
                         {
                             minElement = employee;
                             index = i;
