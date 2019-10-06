@@ -23,7 +23,8 @@ namespace CSharpAdvanceDesignTests
 
             var actual = JoeyOrderByLastNameAndFirstName(
                 employees,
-                employee => employee.LastName);
+                employee => employee.LastName,
+                Comparer<string>.Default);
 
             var expected = new[]
             {
@@ -36,8 +37,10 @@ namespace CSharpAdvanceDesignTests
             expected.ToExpectedObject().ShouldMatch(actual);
         }
 
-        private IEnumerable<Employee> JoeyOrderByLastNameAndFirstName(IEnumerable<Employee> employees,
-            Func<Employee, string> firstSelector)
+        private IEnumerable<Employee> JoeyOrderByLastNameAndFirstName(
+            IEnumerable<Employee> employees,
+            Func<Employee, string> firstSelector,
+            IComparer<string> firstKeyComparer)
         {
             //bubble sort
             var elements = employees.ToList();
@@ -48,12 +51,12 @@ namespace CSharpAdvanceDesignTests
                 for (int i = 1; i < elements.Count; i++)
                 {
                     var employee = elements[i];
-                    if (Comparer<string>.Default.Compare(firstSelector(employee), firstSelector(minElement)) < 0)
+                    if (firstKeyComparer.Compare(firstSelector(employee), firstSelector(minElement)) < 0)
                     {
                         minElement = employee;
                         index = i;
                     }
-                    else if (Comparer<string>.Default.Compare(firstSelector(employee), firstSelector(minElement)) == 0)
+                    else if (firstKeyComparer.Compare(firstSelector(employee), firstSelector(minElement)) == 0)
                     {
                         if (Comparer<string>.Default.Compare(employee.FirstName, minElement.FirstName) < 0)
                         {
