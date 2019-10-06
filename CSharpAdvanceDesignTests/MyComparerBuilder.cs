@@ -5,10 +5,15 @@ using Lab.Entities;
 
 namespace CSharpAdvanceDesignTests
 {
-    public class MyComparerBuilder : IEnumerable<Employee>
+    public interface IMyOrderedEnumerable : IEnumerable<Employee>
     {
-        private IComparer<Employee> _CurrentComparer;
+        IMyOrderedEnumerable CreateOrderedEnumerable(IComparer<Employee> nextComparer);
+    }
+
+    public class MyComparerBuilder : IMyOrderedEnumerable
+    {
         private readonly IEnumerable<Employee> _Source;
+        private IComparer<Employee> _CurrentComparer;
 
         public MyComparerBuilder(IEnumerable<Employee> source, IComparer<Employee> currentComparer)
         {
@@ -24,6 +29,12 @@ namespace CSharpAdvanceDesignTests
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        public IMyOrderedEnumerable CreateOrderedEnumerable(IComparer<Employee> nextComparer)
+        {
+            _CurrentComparer = new ComboComparer(_CurrentComparer, nextComparer);
+            return this;
         }
 
         public static IEnumerator<Employee> Sort(IEnumerable<Employee> employees, IComparer<Employee> comparer)
@@ -49,12 +60,6 @@ namespace CSharpAdvanceDesignTests
                 elements.RemoveAt(index);
                 yield return minElement;
             }
-        }
-
-        public MyComparerBuilder AppendComparer(IComparer<Employee> nextComparer)
-        {
-            _CurrentComparer = new ComboComparer(_CurrentComparer, nextComparer); 
-            return this;
         }
     }
 }

@@ -17,14 +17,13 @@ namespace CSharpAdvanceDesignTests
             IComparer<Employee> comparer)
         {
             return new MyComparerBuilder(employees, comparer);
-            //return MyComparerBuilder.Sort(employees, comparer);
         }
 
-        public static MyComparerBuilder JoeyThenBy<TKey>(this MyComparerBuilder myComparerBuilder,
+        public static IMyOrderedEnumerable JoeyThenBy<TKey>(this IMyOrderedEnumerable myComparerBuilder,
             Func<Employee, TKey> keySelector)
         {
             var comparer = new CombineKeyComparer<TKey>(keySelector, Comparer<TKey>.Default);
-            return myComparerBuilder.AppendComparer(comparer);
+            return myComparerBuilder.CreateOrderedEnumerable(comparer);
         }
     }
 }
