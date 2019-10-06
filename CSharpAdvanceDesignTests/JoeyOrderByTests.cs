@@ -21,8 +21,8 @@ namespace CSharpAdvanceDesignTests
                 new Employee {FirstName = "Joey", LastName = "Chen"},
             };
 
-            var firstComparer = new CombineKeyComparer(employee => employee.LastName, Comparer<string>.Default);
-            var secondComparer = new CombineKeyComparer(employee => employee.FirstName, Comparer<string>.Default);
+            var firstComparer = new CombineKeyComparer<string>(employee => employee.LastName, Comparer<string>.Default);
+            var secondComparer = new CombineKeyComparer<string>(employee => employee.FirstName, Comparer<string>.Default);
 
             var actual = JoeyOrderByLastNameAndFirstName(
                 employees,
@@ -38,6 +38,44 @@ namespace CSharpAdvanceDesignTests
 
             expected.ToExpectedObject().ShouldMatch(actual);
         }
+
+
+        //[Test]
+        //public void orderBy_lastName_firstName_Age()
+        //{
+        //    var employees = new[]
+        //    {
+        //        new Employee {FirstName = "Joey", LastName = "Wang", Age = 50},
+        //        new Employee {FirstName = "Tom", LastName = "Li", Age = 31},
+        //        new Employee {FirstName = "Joseph", LastName = "Chen", Age = 32},
+        //        new Employee {FirstName = "Joey", LastName = "Chen", Age = 33},
+        //        new Employee {FirstName = "Joey", LastName = "Wang", Age = 20},
+        //    };
+
+        //    var firstKeyComparer =
+        //        new CombineKeyComparer<string>(element => element.LastName, Comparer<string>.Default);
+        //    var lastKeyComparer =
+        //        new CombineKeyComparer<string>(element => element.FirstName, Comparer<string>.Default);
+
+        //    var untilNowComparer = new ComboComparer(firstKeyComparer, lastKeyComparer);
+
+        //    var lastComparer = new CombineKeyComparer<int>(employee => employee.Age, Comparer<int>.Default);
+
+        //    var comboComparer = new ComboComparer(untilNowComparer, lastComparer);
+
+        //    var actual = JoeyOrderByLastNameAndFirstName(employees, comboComparer);
+
+        //    var expected = new[]
+        //    {
+        //        new Employee {FirstName = "Joey", LastName = "Chen", Age = 33},
+        //        new Employee {FirstName = "Joseph", LastName = "Chen", Age = 32},
+        //        new Employee {FirstName = "Tom", LastName = "Li", Age = 31},
+        //        new Employee {FirstName = "Joey", LastName = "Wang", Age = 20},
+        //        new Employee {FirstName = "Joey", LastName = "Wang", Age = 50},
+        //    };
+
+        //    expected.ToExpectedObject().ShouldMatch(actual);
+        //}
 
         private IEnumerable<Employee> JoeyOrderByLastNameAndFirstName(
             IEnumerable<Employee> employees,
