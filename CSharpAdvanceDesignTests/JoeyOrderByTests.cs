@@ -7,18 +7,6 @@ using System.Linq;
 
 namespace CSharpAdvanceDesignTests
 {
-    public class CombineKeyComparer
-    {
-        public CombineKeyComparer(Func<Employee, string> firstKeySelector, IComparer<string> firstKeyComparer)
-        {
-            FirstKeySelector = firstKeySelector;
-            FirstKeyComparer = firstKeyComparer;
-        }
-
-        public Func<Employee, string> FirstKeySelector { get; private set; }
-        public IComparer<string> FirstKeyComparer { get; private set; }
-    }
-
     [TestFixture]
     public class JoeyOrderByTests
     {
@@ -65,12 +53,14 @@ namespace CSharpAdvanceDesignTests
                 for (int i = 1; i < elements.Count; i++)
                 {
                     var employee = elements[i];
-                    if (combineKeyComparer.FirstKeyComparer.Compare(combineKeyComparer.FirstKeySelector(employee), combineKeyComparer.FirstKeySelector(minElement)) < 0)
+                    if (combineKeyComparer.KeyComparer.Compare(combineKeyComparer.KeySelector(employee),
+                                                               combineKeyComparer.KeySelector(minElement)) < 0)
                     {
                         minElement = employee;
                         index = i;
                     }
-                    else if (combineKeyComparer.FirstKeyComparer.Compare(combineKeyComparer.FirstKeySelector(employee), combineKeyComparer.FirstKeySelector(minElement)) == 0)
+                    else if (combineKeyComparer.KeyComparer.Compare(combineKeyComparer.KeySelector(employee),
+                                                                    combineKeyComparer.KeySelector(minElement)) == 0)
                     {
                         if (secondKeyComparer.Compare(secondKeySelector(employee), secondKeySelector(minElement)) < 0)
                         {
