@@ -5,17 +5,9 @@ using Lab.Entities;
 
 namespace CSharpAdvanceDesignTests
 {
-    public static class MyLinqExtensions
+    public static class MyComparerBuilder
     {
-
-        //public static IEnumerable<Employee> JoeyOrderBy(this IEnumerable<Employee> employees, IComparer<Employee> comparer)
-        //{
-
-        //}
-
-
-        public static IEnumerable<Employee> JoeyOrderByComboComparer(this IEnumerable<Employee> employees,
-            IComparer<Employee> comparer)
+        public static IEnumerable<Employee> Sort(IEnumerable<Employee> employees, IComparer<Employee> comparer)
         {
             //bubble sort
             var elements = employees.ToList();
@@ -39,13 +31,29 @@ namespace CSharpAdvanceDesignTests
                 yield return minElement;
             }
         }
+    }
 
-        public static IEnumerable<Employee> JoeyOrderBy<TKey>(this IEnumerable<Employee> employees, Func<Employee, TKey> keySelector)
+    public static class MyLinqExtensions
+    {
+        public static IEnumerable<Employee> JoeyOrderBy<TKey>(this IEnumerable<Employee> employees,
+            Func<Employee, TKey> keySelector)
         {
             throw new NotImplementedException();
         }
 
-        public static IEnumerable<Employee> JoeyThenBy<TKey>(this IEnumerable<Employee> actual, Func<Employee, TKey> selector)
+        //public static IEnumerable<Employee> JoeyOrderBy(this IEnumerable<Employee> employees, IComparer<Employee> comparer)
+        //{
+
+        //}
+
+        public static IEnumerable<Employee> JoeyOrderByComboComparer(this IEnumerable<Employee> employees,
+            IComparer<Employee> comparer)
+        {
+            return MyComparerBuilder.Sort(employees, comparer);
+        }
+
+        public static IEnumerable<Employee> JoeyThenBy<TKey>(this IEnumerable<Employee> actual,
+            Func<Employee, TKey> selector)
         {
             throw new NotImplementedException();
         }
