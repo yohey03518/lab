@@ -40,7 +40,7 @@ namespace CSharpAdvanceDesignTests
 
         private IEnumerable<Employee> JoeyOrderByLastNameAndFirstName(
             IEnumerable<Employee> employees,
-            CombineKeyComparer combineKeyComparer,
+            IComparer<Employee> firstCombineKeyComparer,
             Func<Employee, string> secondKeySelector,
             IComparer<string> secondKeyComparer)
         {
@@ -53,14 +53,12 @@ namespace CSharpAdvanceDesignTests
                 for (int i = 1; i < elements.Count; i++)
                 {
                     var employee = elements[i];
-                    if (combineKeyComparer.KeyComparer.Compare(combineKeyComparer.KeySelector(employee),
-                                                               combineKeyComparer.KeySelector(minElement)) < 0)
+                    if (firstCombineKeyComparer.Compare(employee, minElement) < 0)
                     {
                         minElement = employee;
                         index = i;
                     }
-                    else if (combineKeyComparer.KeyComparer.Compare(combineKeyComparer.KeySelector(employee),
-                                                                    combineKeyComparer.KeySelector(minElement)) == 0)
+                    else if (firstCombineKeyComparer.Compare(employee, minElement) == 0)
                     {
                         if (secondKeyComparer.Compare(secondKeySelector(employee), secondKeySelector(minElement)) < 0)
                         {
