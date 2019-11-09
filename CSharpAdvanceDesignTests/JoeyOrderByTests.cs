@@ -1,12 +1,10 @@
 ﻿using ExpectedObjects;
 using Lab.Entities;
 using NUnit.Framework;
-using System.Collections.Generic;
 
 namespace CSharpAdvanceDesignTests
 {
     [TestFixture]
-    [Ignore("not yet")]
     public class JoeyOrderByTests
     {
         [Test]
@@ -20,12 +18,13 @@ namespace CSharpAdvanceDesignTests
                 new Employee {FirstName = "Joey", LastName = "Chen"},
             };
 
-            var actual = JoeyOrderByLastName(employees);
+            var actual = employees.JoeyOrderBy(x => x.LastName)
+                .JoeyThenBy(x => x.FirstName);
 
             var expected = new[]
             {
-                new Employee {FirstName = "Joseph", LastName = "Chen"},
                 new Employee {FirstName = "Joey", LastName = "Chen"},
+                new Employee {FirstName = "Joseph", LastName = "Chen"},
                 new Employee {FirstName = "Tom", LastName = "Li"},
                 new Employee {FirstName = "Joey", LastName = "Wang"},
             };
@@ -33,9 +32,32 @@ namespace CSharpAdvanceDesignTests
             expected.ToExpectedObject().ShouldMatch(actual);
         }
 
-        private IEnumerable<Employee> JoeyOrderByLastName(IEnumerable<Employee> employees)
+        [Test]
+        public void orderBy_lastName_firstName_Age()
         {
-            throw new System.NotImplementedException();
+            var employees = new[]
+            {
+                new Employee {FirstName = "Joey", LastName = "Wang", Age = 50},
+                new Employee {FirstName = "Tom", LastName = "Li", Age = 31},
+                new Employee {FirstName = "Joseph", LastName = "Chen", Age = 32},
+                new Employee {FirstName = "Joey", LastName = "Chen", Age = 33},
+                new Employee {FirstName = "Joey", LastName = "Wang", Age = 20},
+            };
+
+            var actual = employees.JoeyOrderBy(e => e.LastName)
+                .JoeyThenBy(e => e.FirstName)
+                .JoeyThenBy(e => e.Age);
+
+            var expected = new[]
+            {
+                new Employee {FirstName = "Joey", LastName = "Chen", Age = 33},
+                new Employee {FirstName = "Joseph", LastName = "Chen", Age = 32},
+                new Employee {FirstName = "Tom", LastName = "Li", Age = 31},
+                new Employee {FirstName = "Joey", LastName = "Wang", Age = 20},
+                new Employee {FirstName = "Joey", LastName = "Wang", Age = 50},
+            };
+
+            expected.ToExpectedObject().ShouldMatch(actual);
         }
     }
 }
